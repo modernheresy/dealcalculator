@@ -1,13 +1,21 @@
-function calculate() {
-  const price = parseFloat(document.getElementById("price").value);
-  const deposit = parseFloat(document.getElementById("deposit").value) / 100;
-  const rate = parseFloat(document.getElementById("rate").value) / 100;
-  const type = document.getElementById("type").value;
-  const rent = parseFloat(document.getElementById("rent").value);
-  const costs = parseFloat(document.getElementById("costs").value);
+// --- Helpers ---
+function getValue(id) {
+  const val = parseFloat(document.getElementById(id).value);
+  return isNaN(val) ? 0 : val;
+}
 
-  if (!price || !rent) {
-    alert("Please enter price and rent");
+// --- Core calculation ---
+function calculate() {
+  const price = getValue("price");
+  const deposit = getValue("deposit") / 100;
+  const rate = getValue("rate") / 100;
+  const type = document.getElementById("type").value;
+  const rent = getValue("rent");
+  const costs = getValue("costs");
+
+  // Prevent nonsense output if key fields missing
+  if (price <= 0 || rent <= 0) {
+    renderEmpty();
     return;
   }
 
@@ -18,11 +26,19 @@ function calculate() {
   if (type === "interest") {
     mortgage = (loan * rate) / 12;
   } else {
-    // simple approximation for V1 (good enough for validation)
+    // Standard repayment formula
     const months = 30 * 12;
     const monthlyRate = rate / 12;
-    mortgage = loan * (monthlyRate * Math.pow(1 + monthlyRate, months)) /
-               (Math.pow(1 + monthlyRate, months) - 1);
+
+    if (monthlyRate === 0) {
+      mortgage = loan / months;
+    } else {
+      mortgage =
+        (loan *
+          monthlyRate *
+          Math.pow(1 + monthlyRate, months)) /
+        (Math.pow(1 + monthlyRate, months) - 1);
+    }
   }
 
   const cashflow = rent - mortgage - costs;
@@ -39,19 +55,47 @@ function calculate() {
     label = "Borderline";
     cls = "";
   } else {
-    label = "Bad deal";
+    label = "Losing money";
     cls = "bad";
   }
 
+  renderResult(cashflow, annual, yieldVal, label, cls);
+}
+
+// --- Render functions ---
+function renderResult(cashflow, annual, yieldVal, label, cls) {
   const result = document.getElementById("result");
 
   result.classList.remove("hidden");
 
-  result.innerHTML = `
-    <h2 class="${cls}">${cashflow > 0 ? "+" : ""}£${cashflow.toFixed(0)}/month</h2>
-    <p>${label}</p>
-    <hr/>
-    <p>Annual: £${annual.toFixed(0)}</p>
-    <p>Yield: ${yieldVal.toFixed(2)}%</p>
-  `;
+  document.getElementById("cashflow").textContent =
+    `${cashflow > 0 ? "+" : ""}£${cashflow.toFixed(0)}/month`;
+
+  document.getElementById("cashflow").className = cls;
+
+  document.getElementById("label").textContent = label;
+
+  document.getElementById("annual").textContent =
+    `£${annual.toFixed(0)}/year`;
+
+  document.getElementById("yield").textContent =
+    `${(yieldVal * 100).toFixed(2)}%`;
 }
+
+function renderEmpty() {
+  document.getElementById("cashflow").textContent = "£0/month";
+  document.getElementById("label").textContent = "Enter numbers to begin";
+  document.getElementById("annual").textContent = "£0/year";
+  document.getElementById("yield").textContent = "0%";
+}
+
+// --- Init ---
+document.addEventListener("DOMContentLoaded", () => {
+  // Attach live calculation
+  document.querySelectorAll("input, select").forEach((el) => {
+    el.addEventListener("input", calculate);
+  });
+
+  // Run once on load (uses default values)
+  calculate();
+});
