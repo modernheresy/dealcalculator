@@ -3,51 +3,93 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Deal Analyzer</title>
+  <title>Deal Analyser</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
   <div class="container">
 
-    <h1>Property Deal Analyzer</h1>
-    <p class="sub">Instantly check if a deal is good or bad</p>
+    <header>
+      <div class="logo">◈ DEAL ANALYSER</div>
+      <p class="sub">UK Property · Instant cashflow check</p>
+    </header>
 
     <div class="card">
+      <div class="field-grid">
 
-      <label>Purchase price (£)</label>
-      <input id="price" type="number" placeholder="250000" />
+        <div class="field full">
+          <label for="price">Purchase Price</label>
+          <div class="input-wrap"><span class="prefix">£</span><input id="price" type="number" placeholder="250,000" min="0" /></div>
+        </div>
 
-      <label>Deposit (%)</label>
-      <input id="deposit" type="number" value="25" />
+        <div class="field">
+          <label for="deposit">Deposit</label>
+          <div class="input-wrap"><input id="deposit" type="number" value="25" min="1" max="99" /><span class="suffix">%</span></div>
+        </div>
 
-      <label>Interest rate (%)</label>
-      <input id="rate" type="number" value="5" step="0.1"/>
+        <div class="field">
+          <label for="rate">Interest Rate</label>
+          <div class="input-wrap"><input id="rate" type="number" value="5" step="0.1" min="0" /><span class="suffix">%</span></div>
+        </div>
 
-      <label>Mortgage type</label>
-      <select id="type">
-        <option value="interest">Interest-only</option>
-        <option value="repayment">Repayment</option>
-      </select>
+        <div class="field">
+          <label for="term">Mortgage Term</label>
+          <div class="input-wrap"><input id="term" type="number" value="25" min="1" max="40" /><span class="suffix">yrs</span></div>
+        </div>
 
-      <label>Monthly rent (£)</label>
-      <input id="rent" type="number" placeholder="1200" />
+        <div class="field">
+          <label for="type">Mortgage Type</label>
+          <select id="type">
+            <option value="interest">Interest-only</option>
+            <option value="repayment">Repayment</option>
+          </select>
+        </div>
 
-      <label>Monthly costs (£)</label>
-      <input id="costs" type="number" value="200" />
+        <div class="field">
+          <label for="rent">Monthly Rent</label>
+          <div class="input-wrap"><span class="prefix">£</span><input id="rent" type="number" placeholder="1,200" min="0" /></div>
+        </div>
 
-      <button onclick="calculate()">Calculate</button>
+        <div class="field">
+          <label for="costs">Monthly Costs</label>
+          <div class="input-wrap"><span class="prefix">£</span><input id="costs" type="number" value="200" min="0" /></div>
+        </div>
 
+      </div>
     </div>
 
     <div class="result-card" id="result">
-  <h2 id="cashflow">£0/month</h2>
-  <p id="label">Enter numbers to begin</p>
+      <div class="result-header">
+        <div>
+          <div class="result-label" id="label">Enter numbers above</div>
+          <div class="cashflow-number" id="cashflow">—</div>
+          <div class="cashflow-sub">monthly cashflow</div>
+        </div>
+        <div class="verdict-badge" id="badge"></div>
+      </div>
 
-  <div class="meta">
-    <span id="annual">£0/year</span>
-    <span id="yield">0%</span>
-  </div>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-val" id="annual">—</div>
+          <div class="stat-key">Annual cashflow</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="yield-val">—</div>
+          <div class="stat-key">Gross yield</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="roi">—</div>
+          <div class="stat-key">ROI on deposit</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="mortgage-val">—</div>
+          <div class="stat-key">Mortgage / mo</div>
+        </div>
+      </div>
     </div>
 
   </div>
